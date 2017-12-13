@@ -1,0 +1,35 @@
+version: "3"
+services:
+
+  server:
+    image: yeasy/docker_practice:latest
+    ports:
+      - 4000:4000
+    volumes:
+      - ./:/srv/gitbook-src
+    command: server
+
+  windows:
+    image: nginx:alpine
+    volumes:
+      - ./:/srv/www
+      - .travis/conf.d:/etc/nginx/conf.d
+    ports:
+      - 4000:4000
+    command: ["nginx", "-c", "/etc/nginx/conf.d/nginx.conf", "-g", "daemon off;"]
+
+  build:
+    image: yeasy/docker_practice:latest
+    volumes:
+      - ./:/srv/gitbook-src
+    command: build
+
+  development:
+    build: ./.travis
+    image: yeasy/docker_practice:latest
+    ports:
+      - 4000:4000
+    volumes:
+      - ./:/srv/gitbook-src
+    command: server
+    # command: build
